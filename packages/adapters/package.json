@@ -1,0 +1,35 @@
+{
+  "name": "@wafer/adapters",
+  "version": "0.1.0",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./ollama": {
+      "types": "./dist/ollama/index.d.ts",
+      "import": "./dist/ollama/index.js",
+      "require": "./dist/ollama/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "echo \"No lint configured for @wafer/adapters\"",
+    "test": "echo \"No tests configured for @wafer/adapters\""
+  },
+  "dependencies": {
+    "@wafer/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^6.0.0"
+  }
+}

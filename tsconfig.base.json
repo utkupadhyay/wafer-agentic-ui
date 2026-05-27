@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@wafer/protocol": ["packages/protocol/src/index.ts"],
+      "@wafer/core": ["packages/core/src/index.ts"],
+      "@wafer/react": ["packages/react/src/index.ts"],
+      "@wafer/ui": ["packages/ui/src/index.ts"],
+      "@wafer/adapters": ["packages/adapters/src/index.ts"],
+      "@wafer/adapters/ollama": ["packages/adapters/src/ollama/index.ts"]
+    },
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "ignoreDeprecations": "6.0",
+    "noEmit": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx"
+  }
+}
