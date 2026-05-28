@@ -8,6 +8,8 @@
     "dev": "turbo run dev --parallel",
     "dev:playground": "turbo run dev --filter=playground",
     "hooks:install": "bash ./scripts/install-git-hooks.sh",
+    "release:check": "pnpm run build && pnpm run typecheck && mkdir -p .release/tarballs && pnpm -r --filter \"./packages/*\" pack --pack-destination .release/tarballs",
+    "release:publish": "pnpm run build && pnpm run typecheck && pnpm -r --filter \"./packages/*\" publish --access public",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "scan:secrets": "bash ./scripts/scan-secrets.sh",

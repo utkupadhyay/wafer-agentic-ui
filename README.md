@@ -65,6 +65,22 @@ Notes:
 - If `gitleaks` is not installed, a fallback heuristic scanner still runs.
 - Install `gitleaks` for stronger scanning: <https://github.com/gitleaks/gitleaks>
 
+## Publishing Only Library Packages
+
+This monorepo separates product pages/apps from publishable libraries:
+
+- `apps/*` (like `apps/playground`) are demos and stay out of npm.
+- `packages/*` are the publishable Wafer libraries.
+
+Release commands:
+
+1. `pnpm release:check`  
+   Builds + typechecks, then runs `pack` for every package in `packages/*` and stores tarballs in `.release/tarballs`.
+2. `pnpm release:publish`  
+   Publishes only `packages/*` to npm.
+
+The root workspace and playground are `private`, so they are never published.
+
 ---
 
 ## What Problem This Library Solves
