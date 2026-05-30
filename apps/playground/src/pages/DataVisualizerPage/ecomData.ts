@@ -45,20 +45,20 @@ function generateOrders(): Order[] {
   const range = endMs - startMs;
 
   for (let i = 0; i < 200; i++) {
-    const category = categories[Math.floor(rng() * categories.length)];
+    const category = categories[Math.floor(rng() * categories.length)] as OrderCategory;
     const productList = products[category];
-    const product = productList[Math.floor(rng() * productList.length)];
+    const product = productList[Math.floor(rng() * productList.length)] as string;
     const [lo, hi] = revenueBands[category];
     const revenue = Math.round((lo + rng() * (hi - lo)) * 100) / 100;
     const quantity = Math.floor(rng() * 4) + 1;
-    const region = regions[Math.floor(rng() * regions.length)];
+    const region = regions[Math.floor(rng() * regions.length)] as OrderRegion;
 
     const statusRoll = rng();
     const status: OrderStatus =
       statusRoll < 0.72 ? "completed" : statusRoll < 0.88 ? "pending" : "refunded";
 
     const dateMs = startMs + Math.floor(rng() * range);
-    const date = new Date(dateMs).toISOString().split("T")[0];
+    const date = new Date(dateMs).toISOString().substring(0, 10);
 
     orders.push({
       id: `ORD-${String(i + 1).padStart(4, "0")}`,
@@ -141,7 +141,7 @@ export function getDataSummary(): DataSummary {
     totalOrders: ORDERS.length,
     totalRevenue,
     avgOrderValue: Math.round((totalRevenue / ORDERS.length) * 100) / 100,
-    dateRange: { from: ORDERS[0].date, to: ORDERS[ORDERS.length - 1].date },
+    dateRange: { from: (ORDERS[0] as Order).date, to: (ORDERS[ORDERS.length - 1] as Order).date },
     categories: [...categories],
     regions: [...regions],
     statuses: [...statuses],

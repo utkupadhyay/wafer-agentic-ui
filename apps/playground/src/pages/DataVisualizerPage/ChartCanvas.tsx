@@ -93,14 +93,17 @@ export function ChartCanvas({ spec, data }: Props) {
             cx="50%"
             cy="50%"
             outerRadius={120}
-            label={({ label, percent }) => `${label} ${(percent * 100).toFixed(0)}%`}
+            label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
             labelLine={false}
           >
             {data.map((row, i) => (
               <Cell key={row.label} fill={PALETTE[i % PALETTE.length]} />
             ))}
           </Pie>
-          <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatValue(v, metric)} />
+          <Tooltip
+            contentStyle={tooltipStyle}
+            formatter={(v) => formatValue(v as number, metric)}
+          />
           <Legend
             wrapperStyle={{ fontSize: 12, color: "#475569" }}
             formatter={(value) => <span style={{ color: "#475569" }}>{value}</span>}
@@ -133,7 +136,10 @@ export function ChartCanvas({ spec, data }: Props) {
             tickLine={false}
             tickFormatter={(v) => (metric === "revenue" ? `$${(v / 1000).toFixed(0)}k` : String(v))}
           />
-          <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatValue(v, metric)} />
+          <Tooltip
+            contentStyle={tooltipStyle}
+            formatter={(v) => formatValue(v as number, metric)}
+          />
           <Area
             type="monotone"
             dataKey={metric}
@@ -162,7 +168,7 @@ export function ChartCanvas({ spec, data }: Props) {
           tickLine={false}
           tickFormatter={(v) => (metric === "revenue" ? `$${(v / 1000).toFixed(0)}k` : String(v))}
         />
-        <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatValue(v, metric)} />
+        <Tooltip contentStyle={tooltipStyle} formatter={(v) => formatValue(v as number, metric)} />
         <Bar dataKey={metric} radius={[4, 4, 0, 0]}>
           {data.map((row, i) => (
             <Cell key={row.label} fill={PALETTE[i % PALETTE.length]} />

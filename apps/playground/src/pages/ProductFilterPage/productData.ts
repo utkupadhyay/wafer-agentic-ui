@@ -94,7 +94,7 @@ function generateProducts(): Product[] {
     for (const color of colors) {
       const count = Math.floor(rng() * 2) + 1;
       for (let i = 0; i < count; i++) {
-        const name = names[Math.floor(rng() * names.length)];
+        const name = names[Math.floor(rng() * names.length)] as string;
         const [lo, hi] = priceBands[category];
         const price = Math.round(lo + rng() * (hi - lo));
         const rating = Math.round((3.0 + rng() * 2.0) * 10) / 10;

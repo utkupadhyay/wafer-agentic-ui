@@ -12,3 +12,7 @@ fi
 
 echo "Running Biome on staged files..."
 echo "$staged_files" | xargs "$repo_root/node_modules/.bin/biome" check --no-errors-on-unmatched
+
+echo "Running TypeScript type check..."
+cd "$repo_root"
+pnpm -r exec tsc --noEmit
