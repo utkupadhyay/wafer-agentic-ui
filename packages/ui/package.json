@@ -12,12 +12,14 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "echo \"No lint configured for @wafer/ui\"",
-    "test": "echo \"No tests configured for @wafer/ui\""
+    "test": "vitest run --coverage"
   },
   "peerDependencies": {
     "react": "^19.0.0"
@@ -26,7 +28,11 @@
     "@wafer/react": "workspace:*"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.1.8",
+    "jsdom": "^29.1.1",
     "react": "^19.2.0",
     "tsup": "^8.5.0",
     "typescript": "^6.0.0"

@@ -11,7 +11,8 @@ if [ -z "$staged_files" ]; then
 fi
 
 echo "Running Biome on staged files..."
-echo "$staged_files" | xargs "$repo_root/node_modules/.bin/biome" check --no-errors-on-unmatched
+echo "$staged_files" | xargs "$repo_root/node_modules/.bin/biome" check --write --unsafe --no-errors-on-unmatched
+echo "$staged_files" | xargs git add
 
 echo "Running TypeScript type check..."
 cd "$repo_root"

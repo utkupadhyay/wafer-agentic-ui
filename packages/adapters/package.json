@@ -23,7 +23,7 @@
     "build": "tsup",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "echo \"No lint configured for @wafer/adapters\"",
-    "test": "echo \"No tests configured for @wafer/adapters\""
+    "test": "vitest run --coverage"
   },
   "dependencies": {
     "@wafer/core": "workspace:*"
