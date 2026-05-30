@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 
 const architectureLayers = [
   {
@@ -63,37 +63,33 @@ export function LandingPage() {
     mass: 0.2
   });
 
-  const layerCards = useMemo(
-    () =>
-      architectureLayers.map((layer, index) => (
-        <motion.article
-          key={layer.packageName}
-          className="rounded-2xl border border-white/10 bg-slate-950/45 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur"
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{
-            duration: 0.45,
-            ease: [0.16, 1, 0.3, 1],
-            delay: index * 0.08
-          }}
-        >
-          <div className="flex items-start gap-4">
-            <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-cyan-300/40 bg-cyan-300/10 text-xs font-semibold text-cyan-200">
-              {index + 1}
-            </span>
-            <div className="space-y-2">
-              <p className="text-sm font-medium uppercase tracking-[0.16em] text-cyan-100/80">
-                {layer.name}
-              </p>
-              <p className="text-sm font-semibold text-white">{layer.packageName}</p>
-              <p className="text-sm leading-6 text-slate-300">{layer.description}</p>
-            </div>
-          </div>
-        </motion.article>
-      )),
-    []
-  );
+  const layerCards = architectureLayers.map((layer, index) => (
+    <motion.article
+      key={layer.packageName}
+      className="rounded-2xl border border-white/10 bg-slate-950/45 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur"
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{
+        duration: 0.45,
+        ease: [0.16, 1, 0.3, 1],
+        delay: index * 0.08
+      }}
+    >
+      <div className="flex items-start gap-4">
+        <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-cyan-300/40 bg-cyan-300/10 text-xs font-semibold text-cyan-200">
+          {index + 1}
+        </span>
+        <div className="space-y-2">
+          <p className="text-sm font-medium uppercase tracking-[0.16em] text-cyan-100/80">
+            {layer.name}
+          </p>
+          <p className="text-sm font-semibold text-white">{layer.packageName}</p>
+          <p className="text-sm leading-6 text-slate-300">{layer.description}</p>
+        </div>
+      </div>
+    </motion.article>
+  ));
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#050915] text-slate-100">
@@ -121,7 +117,7 @@ export function LandingPage() {
         <header className="rounded-2xl border border-white/10 bg-slate-950/55 px-5 py-4 shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur">
           <nav className="flex flex-wrap items-center justify-end gap-2">
             <Link
-              to="/examples/incident-form"
+              to="/examples"
               className="inline-flex items-center rounded-md border border-white/15 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:bg-white/10"
             >
               Examples
@@ -144,7 +140,7 @@ export function LandingPage() {
 
           <div className="mt-4 flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200/80">
-              Wafer Agentic UI
+              Wafer UI
             </p>
           </div>
 
@@ -212,74 +208,16 @@ export function LandingPage() {
         </motion.section>
       </section>
 
-      <section className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200/80">
-          Examples
-        </p>
-        <h3 className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-          See Wafer in a real product context.
-        </h3>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-300">
-          Both examples run against a local Ollama backend. Set{" "}
-          <code className="rounded bg-white/10 px-1 py-0.5 text-xs text-cyan-200">
-            VITE_OLLAMA_MODEL
-          </code>{" "}
-          to your preferred model.
-        </p>
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          <Link
-            to="/examples/incident-form"
-            className="group rounded-2xl border border-white/10 bg-slate-950/45 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-cyan-300/30 hover:bg-slate-900/60"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-100/80">
-              Example 01
-            </p>
-            <h4 className="mt-2 text-base font-semibold text-white">Incident Report Form</h4>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
-              Warehouse safety desk with AI autofill. Paste a raw incident description and the agent
-              fills every form field in one shot.
-            </p>
-            <p className="mt-4 text-xs font-medium text-cyan-300 transition group-hover:text-cyan-200">
-              Open example →
-            </p>
-          </Link>
-          <Link
-            to="/examples/onboarding"
-            className="group rounded-2xl border border-white/10 bg-slate-950/45 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur transition hover:border-violet-300/30 hover:bg-slate-900/60"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100/80">
-              Example 02
-            </p>
-            <h4 className="mt-2 text-base font-semibold text-white">Onboarding Agent</h4>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
-              Employee onboarding form driven by tool-calling. Write naturally and the agent maps
-              your words to the right fields via function calls.
-            </p>
-            <p className="mt-4 text-xs font-medium text-violet-300 transition group-hover:text-violet-200">
-              Open example →
-            </p>
-          </Link>
-        </div>
-      </section>
-
       <section
         id="architecture"
         ref={architectureRef}
         className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-20 sm:px-6 lg:px-8"
       >
         <div className="rounded-2xl border border-white/10 bg-slate-950/55 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur sm:p-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-200/80">
-            Architecture
+          <p className="mb-7 text-sm leading-7 text-slate-400">
+            Five layers. Each one does exactly one job.
           </p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            A layered system built for composability.
-          </h3>
-          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-            Framer Motion powers this section so each layer appears progressively as you scroll,
-            mirroring how Wafer stacks from protocol to UI.
-          </p>
-
-          <div className="relative mt-7">
+          <div className="relative">
             <div className="pointer-events-none absolute bottom-2 left-3 top-2 hidden w-px bg-slate-700 md:block" />
             <motion.div
               className="pointer-events-none absolute bottom-2 left-3 top-2 hidden origin-top bg-linear-to-b from-cyan-300 via-violet-300 to-cyan-300 md:block"

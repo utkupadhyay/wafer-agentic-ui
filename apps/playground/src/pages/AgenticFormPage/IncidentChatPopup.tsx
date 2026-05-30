@@ -3,18 +3,10 @@ import { AgentThread, ApprovalPanel, Composer, RunTimeline } from "@wafer/ui";
 interface IncidentChatPopupProps {
   isOpen: boolean;
   onToggle: () => void;
-  onPromptSubmitted: (prompt: string) => Promise<void>;
-  isPrefilling: boolean;
   ollamaModel: string;
 }
 
-export function IncidentChatPopup({
-  isOpen,
-  onToggle,
-  onPromptSubmitted,
-  isPrefilling,
-  ollamaModel
-}: IncidentChatPopupProps) {
+export function IncidentChatPopup({ isOpen, onToggle, ollamaModel }: IncidentChatPopupProps) {
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
       {isOpen ? (
@@ -47,17 +39,15 @@ export function IncidentChatPopup({
           <div className="overflow-auto p-3">
             <AgentThread
               title="Incident Assistant Thread"
-              contextHint="I can help you complete this incident report. I focus on incident type, severity, location, time, description, and immediate actions."
-              emptyStateMessage="Start by pasting what happened, and I will help you structure it into a clean incident report."
+              contextHint="Describe what happened and I will fill the form fields through tool calls."
+              emptyStateMessage="Start by describing the incident and I will extract and fill every field automatically."
             />
           </div>
 
           <div className="border-t border-slate-200 bg-white p-3">
             <Composer
-              label="Incident Prompt"
-              placeholder="e.g. Rewrite this incident summary in a professional report format..."
-              onPromptSubmitted={onPromptSubmitted}
-              isPrefilling={isPrefilling}
+              label="Incident Description"
+              placeholder="e.g. Oil spill on morning shift near Aisle B3, reported by Priya Sharma…"
             />
           </div>
 

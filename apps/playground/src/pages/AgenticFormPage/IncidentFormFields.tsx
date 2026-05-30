@@ -10,7 +10,6 @@ interface IncidentFormFieldsProps {
   onSubmit: (event: { preventDefault(): void }) => void;
   savedAt: string | null;
   autofillAt: string | null;
-  autofillError: string | null;
 }
 
 export function IncidentFormFields({
@@ -19,8 +18,7 @@ export function IncidentFormFields({
   onMedicalAttentionChange,
   onSubmit,
   savedAt,
-  autofillAt,
-  autofillError
+  autofillAt
 }: IncidentFormFieldsProps) {
   return (
     <form
@@ -176,11 +174,8 @@ export function IncidentFormFields({
         )}
         {autofillAt ? (
           <p className="text-sm font-medium text-violet-700">
-            Autofilled from chat at {autofillAt}.
+            Form updated via agent at {autofillAt}.
           </p>
-        ) : null}
-        {autofillError ? (
-          <p className="text-sm text-amber-700">AI prefill fallback used: {autofillError}</p>
         ) : null}
       </div>
     </form>

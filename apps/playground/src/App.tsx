@@ -6,10 +6,14 @@ import {
   Outlet,
   RouterProvider
 } from "@tanstack/react-router";
+import { ExamplesShell } from "./layouts/ExamplesShell";
 import { AgenticFormPage } from "./pages/AgenticFormPage";
+import { DataVisualizerPage } from "./pages/DataVisualizerPage";
 import { DocsPage } from "./pages/DocsPage";
+import { ExamplesPage } from "./pages/ExamplesPage";
 import { LandingPage } from "./pages/LandingPage";
 import { OnboardingAgentPage } from "./pages/OnboardingAgentPage";
+import { ProductFilterPage } from "./pages/ProductFilterPage";
 
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
@@ -40,23 +44,52 @@ const docsRoute = createRoute({
   component: DocsPage
 });
 
-const incidentFormRoute = createRoute({
+const examplesRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/examples/incident-form",
+  path: "/examples",
+  component: ExamplesShell
+});
+
+const examplesIndexRoute = createRoute({
+  getParentRoute: () => examplesRoute,
+  path: "/",
+  component: ExamplesPage
+});
+
+const incidentFormRoute = createRoute({
+  getParentRoute: () => examplesRoute,
+  path: "incident-form",
   component: AgenticFormPage
 });
 
 const onboardingRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/examples/onboarding",
+  getParentRoute: () => examplesRoute,
+  path: "onboarding",
   component: OnboardingAgentPage
+});
+
+const dataVisualizerRoute = createRoute({
+  getParentRoute: () => examplesRoute,
+  path: "data-visualizer",
+  component: DataVisualizerPage
+});
+
+const productFilterRoute = createRoute({
+  getParentRoute: () => examplesRoute,
+  path: "product-filter",
+  component: ProductFilterPage
 });
 
 const routeTree = rootRoute.addChildren([
   landingRoute,
   docsRoute,
-  incidentFormRoute,
-  onboardingRoute
+  examplesRoute.addChildren([
+    examplesIndexRoute,
+    incidentFormRoute,
+    onboardingRoute,
+    dataVisualizerRoute,
+    productFilterRoute
+  ])
 ]);
 
 const router = createRouter({

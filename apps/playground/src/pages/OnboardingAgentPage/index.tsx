@@ -1,7 +1,6 @@
-import { Link } from "@tanstack/react-router";
 import { createOllamaTransport } from "@wafer/adapters/ollama";
 import { AgentProvider, createAgentClient } from "@wafer/react";
-import { type ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type ChangeEvent, useRef, useState } from "react";
 import { OnboardingChatPopup } from "./OnboardingChatPopup";
 import { OnboardingChecklist } from "./OnboardingChecklist";
 import { OnboardingFormFields } from "./OnboardingFormFields";
@@ -38,46 +37,32 @@ export function OnboardingAgentPage() {
   );
   const onboardingFormRef = useRef<OnboardingFormState>(initialOnboardingFormState);
 
-  useEffect(() => {
-    onboardingFormRef.current = onboardingForm;
-  }, [onboardingForm]);
+  const onboardingChecklist = buildOnboardingChecklist(onboardingForm);
 
-  const onboardingChecklist = useMemo(
-    () => buildOnboardingChecklist(onboardingForm),
-    [onboardingForm]
-  );
+  const applyAgentPatch = (patch: Partial<OnboardingFormState>) => {
+    const current = onboardingFormRef.current;
+    const nextPatch: Partial<OnboardingFormState> = {};
+    let didChange = false;
 
-  const markAutofill = useCallback(() => {
+    for (const [key, value] of Object.entries(patch) as Array<
+      [keyof OnboardingFormState, OnboardingFormState[keyof OnboardingFormState]]
+    >) {
+      if (value === undefined || current[key] === value) {
+        continue;
+      }
+      Object.assign(nextPatch, { [key]: value });
+      didChange = true;
+    }
+
+    if (!didChange) {
+      return;
+    }
+
+    const next = { ...current, ...nextPatch };
+    onboardingFormRef.current = next;
+    setOnboardingForm(next);
     setAutofillAt(nowShortTime());
-  }, []);
-
-  const applyAgentPatch = useCallback(
-    (patch: Partial<OnboardingFormState>) => {
-      const current = onboardingFormRef.current;
-      const nextPatch: Partial<OnboardingFormState> = {};
-      let didChange = false;
-
-      for (const [key, value] of Object.entries(patch) as Array<
-        [keyof OnboardingFormState, OnboardingFormState[keyof OnboardingFormState]]
-      >) {
-        if (value === undefined || current[key] === value) {
-          continue;
-        }
-        Object.assign(nextPatch, { [key]: value });
-        didChange = true;
-      }
-
-      if (!didChange) {
-        return;
-      }
-
-      const next = { ...current, ...nextPatch };
-      onboardingFormRef.current = next;
-      setOnboardingForm(next);
-      markAutofill();
-    },
-    [markAutofill]
-  );
+  };
 
   const onFieldChange =
     (
@@ -277,15 +262,6 @@ export function OnboardingAgentPage() {
     <AgentProvider client={client}>
       <main className="min-h-screen bg-slate-50 text-slate-900">
         <section className="mx-auto w-full max-w-6xl space-y-5 px-4 py-10 sm:px-6 lg:px-8">
-          <div className="flex justify-start">
-            <Link
-              to="/"
-              className="inline-flex items-center rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
-            >
-              Back to Home
-            </Link>
-          </div>
-
           <header className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700">
               Wafer PeopleOps Desk
