@@ -16,6 +16,11 @@
       "types": "./dist/ollama/index.d.ts",
       "import": "./dist/ollama/index.js",
       "require": "./dist/ollama/index.cjs"
+    },
+    "./groq": {
+      "types": "./dist/groq/index.d.ts",
+      "import": "./dist/groq/index.js",
+      "require": "./dist/groq/index.cjs"
     }
   },
   "files": ["dist"],

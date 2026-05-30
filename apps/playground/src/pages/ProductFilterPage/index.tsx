@@ -1,3 +1,4 @@
+import { createGroqTransport } from "@wafer/adapters/groq";
 import { createOllamaTransport } from "@wafer/adapters/ollama";
 import { AgentProvider, createAgentClient } from "@wafer/react";
 import { useRef, useState } from "react";
@@ -90,94 +91,85 @@ export function ProductFilterPage() {
       return arr.filter((x): x is T => valid.includes(x as T));
     };
 
-    clientRef.current = createAgentClient({
-      transport: createOllamaTransport({
-        baseUrl: ollamaBaseUrl,
-        model: ollamaModel,
-        systemPrompt,
-        maxToolRounds: 6,
-        requestOptions: { temperature: 0 },
-        tools: [
-          {
-            function: {
-              name: "get_filter_state",
-              description:
-                "Read the current active filters and how many products match. Call this before additive updates.",
-              parameters: { type: "object", properties: {} }
-            },
-            execute: () => ({
-              currentFilters: filtersRef.current,
-              matchingProducts: applyFilters(PRODUCTS, filtersRef.current).length
-            })
-          },
-          {
-            function: {
-              name: "set_filters",
-              description:
-                "Apply filters to the product grid. Only pass dimensions you want to change — others stay unchanged.",
-              parameters: {
-                type: "object",
-                properties: {
-                  category: {
-                    type: "array",
-                    items: { type: "string", enum: allCategories }
-                  },
-                  color: {
-                    type: "array",
-                    items: { type: "string", enum: allColors }
-                  },
-                  size: {
-                    type: "array",
-                    items: { type: "string", enum: allSizes }
-                  },
-                  minPrice: { type: "number" },
-                  maxPrice: { type: "number" },
-                  minRating: { type: "number" },
-                  inStockOnly: { type: "boolean" },
-                  sortBy: {
-                    type: "string",
-                    enum: validSortBy
-                  }
-                }
-              }
-            },
-            execute: (args) => {
-              const raw = args as Record<string, unknown>;
-              const patch: Partial<FilterState> = {};
-
-              if ("category" in raw)
-                patch.category = toStringArray<Category>(raw.category, allCategories);
-              if ("color" in raw) patch.color = toStringArray<ProductColor>(raw.color, allColors);
-              if ("size" in raw) patch.size = toStringArray<ProductSize>(raw.size, allSizes);
-              if ("minPrice" in raw && typeof raw.minPrice === "number" && raw.minPrice > 0)
-                patch.minPrice = raw.minPrice;
-              if ("maxPrice" in raw && typeof raw.maxPrice === "number" && raw.maxPrice > 0)
-                patch.maxPrice = raw.maxPrice;
-              if ("minRating" in raw && typeof raw.minRating === "number" && raw.minRating > 0)
-                patch.minRating = raw.minRating;
-              if ("inStockOnly" in raw && typeof raw.inStockOnly === "boolean")
-                patch.inStockOnly = raw.inStockOnly;
-              if ("sortBy" in raw && validSortBy.includes(raw.sortBy as SortBy))
-                patch.sortBy = raw.sortBy as SortBy;
-
-              updateFilters(patch);
-              const count = applyFilters(PRODUCTS, filtersRef.current).length;
-              return { ok: true, appliedFilters: Object.keys(patch), matchingProducts: count };
-            }
-          },
-          {
-            function: {
-              name: "clear_filters",
-              description: "Reset all active filters and show the full catalog.",
-              parameters: { type: "object", properties: {} }
-            },
-            execute: () => {
-              clearFilters();
-              return { ok: true, totalProducts: PRODUCTS.length };
+    const agentTools = [
+      {
+        function: {
+          name: "get_filter_state",
+          description:
+            "Read the current active filters and how many products match. Call this before additive updates.",
+          parameters: { type: "object", properties: {} }
+        },
+        execute: () => ({
+          currentFilters: filtersRef.current,
+          matchingProducts: applyFilters(PRODUCTS, filtersRef.current).length
+        })
+      },
+      {
+        function: {
+          name: "set_filters",
+          description:
+            "Apply filters to the product grid. Only pass dimensions you want to change — others stay unchanged.",
+          parameters: {
+            type: "object",
+            properties: {
+              category: { type: "array", items: { type: "string", enum: allCategories } },
+              color: { type: "array", items: { type: "string", enum: allColors } },
+              size: { type: "array", items: { type: "string", enum: allSizes } },
+              minPrice: { type: "number" },
+              maxPrice: { type: "number" },
+              minRating: { type: "number" },
+              inStockOnly: { type: "boolean" },
+              sortBy: { type: "string", enum: validSortBy }
             }
           }
-        ]
-      })
+        },
+        execute: (args: Record<string, unknown>) => {
+          const patch: Partial<FilterState> = {};
+
+          if ("category" in args)
+            patch.category = toStringArray<Category>(args.category, allCategories);
+          if ("color" in args) patch.color = toStringArray<ProductColor>(args.color, allColors);
+          if ("size" in args) patch.size = toStringArray<ProductSize>(args.size, allSizes);
+          if ("minPrice" in args && typeof args.minPrice === "number" && args.minPrice > 0)
+            patch.minPrice = args.minPrice;
+          if ("maxPrice" in args && typeof args.maxPrice === "number" && args.maxPrice > 0)
+            patch.maxPrice = args.maxPrice;
+          if ("minRating" in args && typeof args.minRating === "number" && args.minRating > 0)
+            patch.minRating = args.minRating;
+          if ("inStockOnly" in args && typeof args.inStockOnly === "boolean")
+            patch.inStockOnly = args.inStockOnly;
+          if ("sortBy" in args && validSortBy.includes(args.sortBy as SortBy))
+            patch.sortBy = args.sortBy as SortBy;
+
+          updateFilters(patch);
+          const count = applyFilters(PRODUCTS, filtersRef.current).length;
+          return { ok: true, appliedFilters: Object.keys(patch), matchingProducts: count };
+        }
+      },
+      {
+        function: {
+          name: "clear_filters",
+          description: "Reset all active filters and show the full catalog.",
+          parameters: { type: "object", properties: {} }
+        },
+        execute: () => {
+          clearFilters();
+          return { ok: true, totalProducts: PRODUCTS.length };
+        }
+      }
+    ];
+
+    clientRef.current = createAgentClient({
+      transport: import.meta.env.PROD
+        ? createGroqTransport({ systemPrompt, maxToolRounds: 6, tools: agentTools })
+        : createOllamaTransport({
+            baseUrl: ollamaBaseUrl,
+            model: ollamaModel,
+            systemPrompt,
+            maxToolRounds: 6,
+            requestOptions: { temperature: 0 },
+            tools: agentTools
+          })
     });
   }
 

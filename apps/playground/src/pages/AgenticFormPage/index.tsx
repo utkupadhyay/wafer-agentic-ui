@@ -1,3 +1,4 @@
+import { createGroqTransport } from "@wafer/adapters/groq";
 import { createOllamaTransport } from "@wafer/adapters/ollama";
 import { AgentProvider, createAgentClient } from "@wafer/react";
 import { type ChangeEvent, useRef, useState } from "react";
@@ -84,103 +85,111 @@ export function AgenticFormPage() {
       "Keep replies concise."
     ].join(" ");
 
-    clientRef.current = createAgentClient({
-      transport: createOllamaTransport({
-        baseUrl: ollamaBaseUrl,
-        model: ollamaModel,
-        systemPrompt: toolSystemPrompt,
-        maxToolRounds: 6,
-        forceToolCallRetryCount: 2,
-        requestOptions: { temperature: 0 },
-        tools: [
-          {
-            function: {
-              name: "get_incident_form_state",
-              description:
-                "Read the current incident form state and which required fields are still missing.",
-              parameters: { type: "object", properties: {} }
-            },
-            execute: () => {
-              const snapshot = formRef.current;
-              const missingRequiredFields = requiredIncidentFields.filter((f) => {
-                const v = snapshot[f];
-                return typeof v !== "string" || v.trim() === "";
-              });
-              return { form: snapshot, missingRequiredFields };
-            }
-          },
-          {
-            function: {
-              name: "set_incident_fields",
-              description:
-                "Set one or more incident form fields in a single call. Pass each known field as a top-level key.",
-              parameters: {
-                type: "object",
-                properties: {
-                  reporterName: { type: "string" },
-                  shift: { type: "string", enum: ["morning", "afternoon", "night"] },
-                  incidentType: {
-                    type: "string",
-                    enum: ["injury", "equipment", "spill", "near-miss", "security"]
-                  },
-                  severity: { type: "string", enum: ["low", "medium", "high", "critical"] },
-                  location: { type: "string" },
-                  incidentTime: {
-                    type: "string",
-                    description: "datetime-local format YYYY-MM-DDTHH:mm"
-                  },
-                  description: { type: "string" },
-                  immediateAction: { type: "string" },
-                  medicalAttentionRequired: { type: "boolean" }
-                }
-              }
-            },
-            execute: (args) => {
-              const raw = args as Record<string, unknown>;
-              const patch: Partial<IncidentFormState> = {};
-
-              if (typeof raw.reporterName === "string" && raw.reporterName.trim()) {
-                patch.reporterName = raw.reporterName.trim();
-              }
-              const shift = typeof raw.shift === "string" ? raw.shift.trim().toLowerCase() : "";
-              if (validShift.has(shift as IncidentFormState["shift"])) {
-                patch.shift = shift as IncidentFormState["shift"];
-              }
-              const incidentType =
-                typeof raw.incidentType === "string" ? raw.incidentType.trim().toLowerCase() : "";
-              if (validIncidentType.has(incidentType as IncidentFormState["incidentType"])) {
-                patch.incidentType = incidentType as IncidentFormState["incidentType"];
-              }
-              const severity =
-                typeof raw.severity === "string" ? raw.severity.trim().toLowerCase() : "";
-              if (validSeverity.has(severity as IncidentFormState["severity"])) {
-                patch.severity = severity as IncidentFormState["severity"];
-              }
-              if (typeof raw.location === "string" && raw.location.trim()) {
-                patch.location = raw.location.trim();
-              }
-              if (
-                typeof raw.incidentTime === "string" &&
-                /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(raw.incidentTime.trim())
-              ) {
-                patch.incidentTime = raw.incidentTime.trim();
-              }
-              if (typeof raw.description === "string" && raw.description.trim()) {
-                patch.description = raw.description.trim();
-              }
-              if (typeof raw.immediateAction === "string" && raw.immediateAction.trim()) {
-                patch.immediateAction = raw.immediateAction.trim();
-              }
-              if (typeof raw.medicalAttentionRequired === "boolean") {
-                patch.medicalAttentionRequired = raw.medicalAttentionRequired;
-              }
-
-              applyAgentPatch(patch);
-              return { ok: true, appliedFields: Object.keys(patch) };
+    const agentTools = [
+      {
+        function: {
+          name: "get_incident_form_state",
+          description:
+            "Read the current incident form state and which required fields are still missing.",
+          parameters: { type: "object", properties: {} }
+        },
+        execute: () => {
+          const snapshot = formRef.current;
+          const missingRequiredFields = requiredIncidentFields.filter((f) => {
+            const v = snapshot[f];
+            return typeof v !== "string" || v.trim() === "";
+          });
+          return { form: snapshot, missingRequiredFields };
+        }
+      },
+      {
+        function: {
+          name: "set_incident_fields",
+          description:
+            "Set one or more incident form fields in a single call. Pass each known field as a top-level key.",
+          parameters: {
+            type: "object",
+            properties: {
+              reporterName: { type: "string" },
+              shift: { type: "string", enum: ["morning", "afternoon", "night"] },
+              incidentType: {
+                type: "string",
+                enum: ["injury", "equipment", "spill", "near-miss", "security"]
+              },
+              severity: { type: "string", enum: ["low", "medium", "high", "critical"] },
+              location: { type: "string" },
+              incidentTime: {
+                type: "string",
+                description: "datetime-local format YYYY-MM-DDTHH:mm"
+              },
+              description: { type: "string" },
+              immediateAction: { type: "string" },
+              medicalAttentionRequired: { type: "boolean" }
             }
           }
-        ]
-      })
+        },
+        execute: (args: Record<string, unknown>) => {
+          const patch: Partial<IncidentFormState> = {};
+
+          if (typeof args.reporterName === "string" && args.reporterName.trim()) {
+            patch.reporterName = args.reporterName.trim();
+          }
+          const shift = typeof args.shift === "string" ? args.shift.trim().toLowerCase() : "";
+          if (validShift.has(shift as IncidentFormState["shift"])) {
+            patch.shift = shift as IncidentFormState["shift"];
+          }
+          const incidentType =
+            typeof args.incidentType === "string" ? args.incidentType.trim().toLowerCase() : "";
+          if (validIncidentType.has(incidentType as IncidentFormState["incidentType"])) {
+            patch.incidentType = incidentType as IncidentFormState["incidentType"];
+          }
+          const severity =
+            typeof args.severity === "string" ? args.severity.trim().toLowerCase() : "";
+          if (validSeverity.has(severity as IncidentFormState["severity"])) {
+            patch.severity = severity as IncidentFormState["severity"];
+          }
+          if (typeof args.location === "string" && args.location.trim()) {
+            patch.location = args.location.trim();
+          }
+          if (
+            typeof args.incidentTime === "string" &&
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(args.incidentTime.trim())
+          ) {
+            patch.incidentTime = args.incidentTime.trim();
+          }
+          if (typeof args.description === "string" && args.description.trim()) {
+            patch.description = args.description.trim();
+          }
+          if (typeof args.immediateAction === "string" && args.immediateAction.trim()) {
+            patch.immediateAction = args.immediateAction.trim();
+          }
+          if (typeof args.medicalAttentionRequired === "boolean") {
+            patch.medicalAttentionRequired = args.medicalAttentionRequired;
+          }
+
+          applyAgentPatch(patch);
+          return { ok: true, appliedFields: Object.keys(patch) };
+        }
+      }
+    ];
+
+    clientRef.current = createAgentClient({
+      transport: import.meta.env.PROD
+        ? createGroqTransport({
+            systemPrompt: toolSystemPrompt,
+            maxToolRounds: 6,
+            forceToolCallRetryCount: 2,
+            tools: agentTools
+          })
+        : createOllamaTransport({
+            baseUrl: ollamaBaseUrl,
+            model: ollamaModel,
+            systemPrompt: toolSystemPrompt,
+            maxToolRounds: 6,
+            forceToolCallRetryCount: 2,
+            requestOptions: { temperature: 0 },
+            tools: agentTools
+          })
     });
   }
 

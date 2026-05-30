@@ -1,3 +1,4 @@
+import { createGroqTransport } from "@wafer/adapters/groq";
 import { createOllamaTransport } from "@wafer/adapters/ollama";
 import { AgentProvider, createAgentClient } from "@wafer/react";
 import { type ChangeEvent, useRef, useState } from "react";
@@ -100,150 +101,151 @@ export function OnboardingAgentPage() {
       "Only ask follow-up questions for missing required fields after you have called the tool."
     ].join(" ");
 
-    clientRef.current = createAgentClient({
-      transport: createOllamaTransport({
-        baseUrl: ollamaBaseUrl,
-        model: ollamaModel,
-        systemPrompt: onboardingToolPrompt,
-        maxToolRounds: 8,
-        forceToolCallRetryCount: 2,
-        requestOptions: { temperature: 0 },
-        tools: [
-          {
-            function: {
-              name: "get_onboarding_form_state",
-              description:
-                "Read the current onboarding form state and missing required fields before deciding next steps.",
-              parameters: { type: "object", properties: {} }
-            },
-            execute: () => {
-              const snapshot = onboardingFormRef.current;
-              const missingRequiredFields = requiredOnboardingFields.filter((field) => {
-                const raw = snapshot[field];
-                return typeof raw !== "string" || raw.trim() === "";
-              });
-              return { form: snapshot, missingRequiredFields };
-            }
-          },
-          {
-            function: {
-              name: "set_onboarding_field",
-              description:
-                "Set one onboarding text/select field with a normalized value. Use for targeted updates.",
-              parameters: {
-                type: "object",
-                required: ["field", "value"],
-                properties: {
-                  field: { type: "string", enum: [...onboardingTextFieldNames] },
-                  value: { type: "string" }
-                }
-              }
-            },
-            execute: (argumentsPayload) => {
-              const rawField = argumentsPayload.field;
-              const field = normalizeOnboardingFieldName(rawField);
-              if (!field || !isOnboardingTextField(field)) {
-                throw new Error("Invalid field passed to set_onboarding_field.");
-              }
-
-              const textValue = toTextValueForField(
-                field,
-                argumentsPayload.value,
-                String(rawField)
-              );
-              const value = normalizeOnboardingTextFieldValue(field, textValue);
-              applyAgentPatch({ [field]: value });
-              return { ok: true, field, value };
-            }
-          },
-          {
-            function: {
-              name: "set_onboarding_flag",
-              description:
-                "Set one onboarding boolean requirement flag for laptop, VPN, or payroll setup.",
-              parameters: {
-                type: "object",
-                required: ["field", "value"],
-                properties: {
-                  field: { type: "string", enum: [...onboardingToggleFieldNames] },
-                  value: { type: "boolean" }
-                }
-              }
-            },
-            execute: (argumentsPayload) => {
-              const rawField = argumentsPayload.field;
-              const field = normalizeOnboardingFieldName(rawField);
-              if (!field || !isOnboardingToggleField(field)) {
-                throw new Error("Invalid field passed to set_onboarding_flag.");
-              }
-
-              const value = toBooleanLikeValue(argumentsPayload.value);
-              applyAgentPatch({ [field]: value });
-              return { ok: true, field, value };
-            }
-          },
-          {
-            function: {
-              name: "set_onboarding_fields",
-              description:
-                "Set multiple onboarding fields in a single call. Pass each field you know as a top-level key.",
-              parameters: {
-                type: "object",
-                properties: {
-                  employeeName: { type: "string" },
-                  workEmail: { type: "string" },
-                  roleTitle: { type: "string" },
-                  department: { type: "string" },
-                  managerName: { type: "string" },
-                  startDate: { type: "string", description: "YYYY-MM-DD format" },
-                  workLocation: { type: "string" },
-                  employmentType: { type: "string", enum: ["full-time", "contractor", "intern"] },
-                  laptopRequired: { type: "boolean" },
-                  vpnAccessRequired: { type: "boolean" },
-                  payrollRequired: { type: "boolean" },
-                  accessGroups: { type: "string" },
-                  equipmentNotes: { type: "string" },
-                  welcomeMessage: { type: "string" }
-                }
-              }
-            },
-            execute: (argumentsPayload) => {
-              const hasUpdatesWrapper =
-                typeof argumentsPayload.updates === "object" &&
-                argumentsPayload.updates !== null &&
-                !Array.isArray(argumentsPayload.updates);
-
-              const updates = (
-                hasUpdatesWrapper ? argumentsPayload.updates : argumentsPayload
-              ) as Record<string, unknown>;
-              const patch: Partial<OnboardingFormState> = {};
-
-              for (const [key, rawValue] of Object.entries(updates)) {
-                const field = normalizeOnboardingFieldName(key);
-                if (!field) {
-                  continue;
-                }
-
-                if (isOnboardingTextField(field)) {
-                  const textValue = toTextValueForField(field, rawValue, key);
-                  if (!textValue.trim()) {
-                    continue;
-                  }
-                  const mergedText = mergeTextFieldValue(patch[field], textValue, field);
-                  Object.assign(patch, {
-                    [field]: normalizeOnboardingTextFieldValue(field, mergedText)
-                  });
-                } else if (isOnboardingToggleField(field)) {
-                  Object.assign(patch, { [field]: toBooleanLikeValue(rawValue) });
-                }
-              }
-
-              applyAgentPatch(patch);
-              return { ok: true, appliedFields: Object.keys(patch), patch };
+    const agentTools = [
+      {
+        function: {
+          name: "get_onboarding_form_state",
+          description:
+            "Read the current onboarding form state and missing required fields before deciding next steps.",
+          parameters: { type: "object", properties: {} }
+        },
+        execute: () => {
+          const snapshot = onboardingFormRef.current;
+          const missingRequiredFields = requiredOnboardingFields.filter((field) => {
+            const raw = snapshot[field];
+            return typeof raw !== "string" || raw.trim() === "";
+          });
+          return { form: snapshot, missingRequiredFields };
+        }
+      },
+      {
+        function: {
+          name: "set_onboarding_field",
+          description:
+            "Set one onboarding text/select field with a normalized value. Use for targeted updates.",
+          parameters: {
+            type: "object",
+            required: ["field", "value"],
+            properties: {
+              field: { type: "string", enum: [...onboardingTextFieldNames] },
+              value: { type: "string" }
             }
           }
-        ]
-      })
+        },
+        execute: (argumentsPayload: Record<string, unknown>) => {
+          const rawField = argumentsPayload.field;
+          const field = normalizeOnboardingFieldName(rawField);
+          if (!field || !isOnboardingTextField(field)) {
+            throw new Error("Invalid field passed to set_onboarding_field.");
+          }
+
+          const textValue = toTextValueForField(field, argumentsPayload.value, String(rawField));
+          const value = normalizeOnboardingTextFieldValue(field, textValue);
+          applyAgentPatch({ [field]: value });
+          return { ok: true, field, value };
+        }
+      },
+      {
+        function: {
+          name: "set_onboarding_flag",
+          description:
+            "Set one onboarding boolean requirement flag for laptop, VPN, or payroll setup.",
+          parameters: {
+            type: "object",
+            required: ["field", "value"],
+            properties: {
+              field: { type: "string", enum: [...onboardingToggleFieldNames] },
+              value: { type: "boolean" }
+            }
+          }
+        },
+        execute: (argumentsPayload: Record<string, unknown>) => {
+          const rawField = argumentsPayload.field;
+          const field = normalizeOnboardingFieldName(rawField);
+          if (!field || !isOnboardingToggleField(field)) {
+            throw new Error("Invalid field passed to set_onboarding_flag.");
+          }
+
+          const value = toBooleanLikeValue(argumentsPayload.value);
+          applyAgentPatch({ [field]: value });
+          return { ok: true, field, value };
+        }
+      },
+      {
+        function: {
+          name: "set_onboarding_fields",
+          description:
+            "Set multiple onboarding fields in a single call. Pass each field you know as a top-level key.",
+          parameters: {
+            type: "object",
+            properties: {
+              employeeName: { type: "string" },
+              workEmail: { type: "string" },
+              roleTitle: { type: "string" },
+              department: { type: "string" },
+              managerName: { type: "string" },
+              startDate: { type: "string", description: "YYYY-MM-DD format" },
+              workLocation: { type: "string" },
+              employmentType: { type: "string", enum: ["full-time", "contractor", "intern"] },
+              laptopRequired: { type: "boolean" },
+              vpnAccessRequired: { type: "boolean" },
+              payrollRequired: { type: "boolean" },
+              accessGroups: { type: "string" },
+              equipmentNotes: { type: "string" },
+              welcomeMessage: { type: "string" }
+            }
+          }
+        },
+        execute: (argumentsPayload: Record<string, unknown>) => {
+          const hasUpdatesWrapper =
+            typeof argumentsPayload.updates === "object" &&
+            argumentsPayload.updates !== null &&
+            !Array.isArray(argumentsPayload.updates);
+
+          const updates = (
+            hasUpdatesWrapper ? argumentsPayload.updates : argumentsPayload
+          ) as Record<string, unknown>;
+          const patch: Partial<OnboardingFormState> = {};
+
+          for (const [key, rawValue] of Object.entries(updates)) {
+            const field = normalizeOnboardingFieldName(key);
+            if (!field) continue;
+
+            if (isOnboardingTextField(field)) {
+              const textValue = toTextValueForField(field, rawValue, key);
+              if (!textValue.trim()) continue;
+              const mergedText = mergeTextFieldValue(patch[field], textValue, field);
+              Object.assign(patch, {
+                [field]: normalizeOnboardingTextFieldValue(field, mergedText)
+              });
+            } else if (isOnboardingToggleField(field)) {
+              Object.assign(patch, { [field]: toBooleanLikeValue(rawValue) });
+            }
+          }
+
+          applyAgentPatch(patch);
+          return { ok: true, appliedFields: Object.keys(patch), patch };
+        }
+      }
+    ];
+
+    clientRef.current = createAgentClient({
+      transport: import.meta.env.PROD
+        ? createGroqTransport({
+            systemPrompt: onboardingToolPrompt,
+            maxToolRounds: 8,
+            forceToolCallRetryCount: 2,
+            tools: agentTools
+          })
+        : createOllamaTransport({
+            baseUrl: ollamaBaseUrl,
+            model: ollamaModel,
+            systemPrompt: onboardingToolPrompt,
+            maxToolRounds: 8,
+            forceToolCallRetryCount: 2,
+            requestOptions: { temperature: 0 },
+            tools: agentTools
+          })
     });
   }
 

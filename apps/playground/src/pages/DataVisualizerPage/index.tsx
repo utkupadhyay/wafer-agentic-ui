@@ -1,3 +1,4 @@
+import { createGroqTransport } from "@wafer/adapters/groq";
 import { createOllamaTransport } from "@wafer/adapters/ollama";
 import { AgentProvider, createAgentClient } from "@wafer/react";
 import { useRef, useState } from "react";
@@ -44,59 +45,63 @@ export function DataVisualizerPage() {
 
   const clientRef = useRef<ReturnType<typeof createAgentClient> | null>(null);
   if (clientRef.current === null) {
-    clientRef.current = createAgentClient({
-      transport: createOllamaTransport({
-        baseUrl: ollamaBaseUrl,
-        model: ollamaModel,
-        systemPrompt,
-        maxToolRounds: 6,
-        requestOptions: { temperature: 0 },
-        tools: [
-          {
-            function: {
-              name: "get_data_summary",
-              description:
-                "Return a summary of the dataset: total orders, revenue, date range, available categories, regions, statuses, and top product.",
-              parameters: { type: "object", properties: {} }
-            },
-            execute: () => getDataSummary()
-          },
-          {
-            function: {
-              name: "render_chart",
-              description:
-                "Render a chart on the dashboard based on a spec. Call this whenever the user asks a data question.",
-              parameters: {
-                type: "object",
-                required: ["type", "title", "metric", "groupBy"],
-                properties: {
-                  type: {
-                    type: "string",
-                    enum: ["bar", "area", "pie", "table"],
-                    description: "Chart type"
-                  },
-                  title: { type: "string", description: "Short human-readable chart title" },
-                  metric: {
-                    type: "string",
-                    enum: ["revenue", "quantity", "orders"],
-                    description: "The numeric value to plot"
-                  },
-                  groupBy: {
-                    type: "string",
-                    enum: ["category", "region", "status", "month", "product"],
-                    description: "Dimension to group/aggregate by"
-                  }
-                }
+    const agentTools = [
+      {
+        function: {
+          name: "get_data_summary",
+          description:
+            "Return a summary of the dataset: total orders, revenue, date range, available categories, regions, statuses, and top product.",
+          parameters: { type: "object", properties: {} }
+        },
+        execute: () => getDataSummary()
+      },
+      {
+        function: {
+          name: "render_chart",
+          description:
+            "Render a chart on the dashboard based on a spec. Call this whenever the user asks a data question.",
+          parameters: {
+            type: "object",
+            required: ["type", "title", "metric", "groupBy"],
+            properties: {
+              type: {
+                type: "string",
+                enum: ["bar", "area", "pie", "table"],
+                description: "Chart type"
+              },
+              title: { type: "string", description: "Short human-readable chart title" },
+              metric: {
+                type: "string",
+                enum: ["revenue", "quantity", "orders"],
+                description: "The numeric value to plot"
+              },
+              groupBy: {
+                type: "string",
+                enum: ["category", "region", "status", "month", "product"],
+                description: "Dimension to group/aggregate by"
               }
-            },
-            execute: (args) => {
-              const spec = args as unknown as ChartSpec;
-              const entry = addChart(spec);
-              return { ok: true, chartId: entry.id, rowCount: entry.data.length };
             }
           }
-        ]
-      })
+        },
+        execute: (args: Record<string, unknown>) => {
+          const spec = args as unknown as ChartSpec;
+          const entry = addChart(spec);
+          return { ok: true, chartId: entry.id, rowCount: entry.data.length };
+        }
+      }
+    ];
+
+    clientRef.current = createAgentClient({
+      transport: import.meta.env.PROD
+        ? createGroqTransport({ systemPrompt, maxToolRounds: 6, tools: agentTools })
+        : createOllamaTransport({
+            baseUrl: ollamaBaseUrl,
+            model: ollamaModel,
+            systemPrompt,
+            maxToolRounds: 6,
+            requestOptions: { temperature: 0 },
+            tools: agentTools
+          })
     });
   }
 
@@ -121,7 +126,7 @@ export function DataVisualizerPage() {
 
           <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
             <div className="flex flex-col gap-4">
-              <div className="min-h-[420px] rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="min-h-105 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 {activeChart ? (
                   <>
                     <p className="mb-4 text-base font-semibold text-slate-900">
@@ -130,7 +135,7 @@ export function DataVisualizerPage() {
                     <ChartCanvas spec={activeChart.spec} data={activeChart.data} />
                   </>
                 ) : (
-                  <div className="flex h-full min-h-[360px] flex-col items-center justify-center gap-3 text-center">
+                  <div className="flex h-full min-h-[90] flex-col items-center justify-center gap-3 text-center">
                     <p className="text-3xl text-slate-300">◻</p>
                     <p className="text-sm text-slate-500">
                       No chart yet. Ask a question in the sidebar.
@@ -162,7 +167,7 @@ export function DataVisualizerPage() {
               )}
             </div>
 
-            <div className="h-[600px] lg:h-auto lg:min-h-[600px]">
+            <div className="h-[150] lg:h-auto lg:min-h-[150]">
               <VisualizerSidebar ollamaModel={ollamaModel} />
             </div>
           </div>
