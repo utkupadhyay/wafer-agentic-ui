@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useAgentState } from "./useAgentState";
 import { useAgentClient } from "./useAgentClient";
+import { useAgentState } from "./useAgentState";
 
 export function useApprovals() {
   const client = useAgentClient();

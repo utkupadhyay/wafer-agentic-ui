@@ -24,14 +24,11 @@ const messageToneByRole: Record<MessageRole, string> = {
   tool: "border-amber-200 bg-amber-50 border-dashed"
 };
 
-export const panelClass =
-  "rounded-xl border border-slate-200 bg-white p-4 shadow-sm";
+export const panelClass = "rounded-xl border border-slate-200 bg-white p-4 shadow-sm";
 
-export const sectionTitleClass =
-  "text-xs font-semibold uppercase tracking-wide text-slate-500";
+export const sectionTitleClass = "text-xs font-semibold uppercase tracking-wide text-slate-500";
 
-export const cardLabelClass =
-  "text-[11px] font-semibold uppercase tracking-wide text-slate-500";
+export const cardLabelClass = "text-[11px] font-semibold uppercase tracking-wide text-slate-500";
 
 export const codeBlockClass =
   "overflow-x-auto rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs leading-5 text-slate-700";

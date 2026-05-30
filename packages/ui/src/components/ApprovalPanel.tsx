@@ -11,10 +11,15 @@ export function ApprovalPanel() {
         <h2 className={sectionTitleClass}>Approvals</h2>
       </header>
 
-      {pending.length === 0 ? <p className="text-sm text-slate-500">No pending approvals.</p> : null}
+      {pending.length === 0 ? (
+        <p className="text-sm text-slate-500">No pending approvals.</p>
+      ) : null}
 
       {pending.map((approval) => (
-        <article key={approval.id} className="mt-3 space-y-3 rounded-lg border border-slate-200 bg-white p-3">
+        <article
+          key={approval.id}
+          className="mt-3 space-y-3 rounded-lg border border-slate-200 bg-white p-3"
+        >
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-sm font-semibold text-slate-900">{approval.actionLabel}</h3>
             <span className={stateChipClass(approval.status)}>{approval.status}</span>

@@ -1,4 +1,3 @@
-import type { FormEvent } from "react";
 import { useComposer } from "@wafer/react";
 import { sectionTitleClass } from "./theme";
 
@@ -17,7 +16,7 @@ export function Composer({
 }: ComposerProps) {
   const { input, setInput, submit, isRunning } = useComposer();
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: { preventDefault(): void }) => {
     event.preventDefault();
     const prompt = input.trim();
     if (!prompt) {
@@ -28,7 +27,8 @@ export function Composer({
       try {
         await onPromptSubmitted(prompt);
       } catch (error) {
-        console.error("Failed to prefill incident form from prompt", error);
+        // biome-ignore lint/suspicious/noConsole: surface callback errors to library consumers
+        console.error("onPromptSubmitted callback failed", error);
       }
     }
     await submit(prompt);
@@ -41,7 +41,7 @@ export function Composer({
       </label>
       <textarea
         id="wafer-composer-input"
-        className="min-h-[88px] w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-slate-400"
+        className="min-h-22 w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-slate-400"
         value={input}
         onChange={(event) => setInput(event.target.value)}
         placeholder={placeholder}

@@ -1,6 +1,6 @@
 import type { AgentEvent, MessageRole } from "@wafer/protocol";
-import { createInitialState } from "../state";
 import { reduceEvent } from "../runtime/reduceEvent";
+import { createInitialState } from "../state";
 import type { AgentState, AgentTransport, SubmitApprovalInput } from "../types";
 
 type Listener = () => void;

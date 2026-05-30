@@ -1,6 +1,8 @@
-import { useEffect } from "react";
 import type { AgentState } from "@wafer/react";
-import { buttonGhostClass, cardLabelClass, codeBlockClass, stateChipClass } from "./theme";
+import { useEffect, useRef } from "react";
+import { formatPayload } from "../utils/formatPayload";
+import { buttonGhostClass, cardLabelClass, stateChipClass } from "./theme";
+import { PayloadSection } from "./ui/PayloadSection";
 
 type ToolCall = AgentState["toolCalls"][string];
 
@@ -9,52 +11,44 @@ interface ToolCallDetailsModalProps {
   onClose: () => void;
 }
 
-function formatPayload(value: unknown) {
-  if (value === undefined) {
-    return "No data";
-  }
-
-  if (typeof value === "string") {
-    return value;
-  }
-
-  try {
-    return JSON.stringify(value, null, 2);
-  } catch {
-    return String(value);
-  }
-}
-
 export function ToolCallDetailsModal({ toolCall, onClose }: ToolCallDetailsModalProps) {
+  const onCloseRef = useRef(onClose);
+  // Update after commit so concurrent-mode thrown renders don't leave ref stale.
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: primitive ID dep is intentional — avoids re-registering the listener on every status update while the modal is open
   useEffect(() => {
     if (!toolCall) {
       return;
     }
 
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onClose();
+        onCloseRef.current();
       }
     };
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKeyDown);
-
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [toolCall, onClose]);
+  }, [toolCall?.id]);
 
   if (!toolCall) {
     return null;
   }
 
   return (
-    <div
-      className="fixed inset-0 z-[1200] grid place-items-center bg-slate-900/45 p-4"
-      role="presentation"
+    <button
+      type="button"
+      className="fixed inset-0 z-1200 grid place-items-center bg-slate-900/45 p-4"
+      aria-label="Close modal"
       onClick={onClose}
     >
       <article
@@ -63,11 +57,15 @@ export function ToolCallDetailsModal({ toolCall, onClose }: ToolCallDetailsModal
         aria-modal="true"
         aria-labelledby="wafer-toolcall-modal-title"
         onClick={(event) => event.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
       >
         <header className="flex items-start justify-between gap-3">
           <div>
             <p className={cardLabelClass}>Tool Details</p>
-            <h3 id="wafer-toolcall-modal-title" className="mt-1 text-lg font-semibold text-slate-900">
+            <h3
+              id="wafer-toolcall-modal-title"
+              className="mt-1 text-lg font-semibold text-slate-900"
+            >
               {toolCall.name}
             </h3>
             <p className="text-xs text-slate-500">run: {toolCall.runId}</p>
@@ -75,23 +73,14 @@ export function ToolCallDetailsModal({ toolCall, onClose }: ToolCallDetailsModal
           <span className={stateChipClass(toolCall.status)}>{toolCall.status}</span>
         </header>
 
-        <section className="grid gap-1.5">
-          <p className={cardLabelClass}>Input</p>
-          <pre className={codeBlockClass}>{formatPayload(toolCall.input)}</pre>
-        </section>
+        <PayloadSection label="Input" content={formatPayload(toolCall.input)} />
 
         {toolCall.status === "completed" ? (
-          <section className="grid gap-1.5">
-            <p className={cardLabelClass}>Output</p>
-            <pre className={codeBlockClass}>{formatPayload(toolCall.output)}</pre>
-          </section>
+          <PayloadSection label="Output" content={formatPayload(toolCall.output)} />
         ) : null}
 
         {toolCall.status === "failed" ? (
-          <section className="grid gap-1.5">
-            <p className={cardLabelClass}>Error</p>
-            <pre className={`${codeBlockClass} text-rose-600`}>{toolCall.error ?? "Unknown tool error."}</pre>
-          </section>
+          <PayloadSection label="Error" content={toolCall.error ?? "Unknown tool error."} error />
         ) : null}
 
         <footer className="flex justify-end">
@@ -100,6 +89,6 @@ export function ToolCallDetailsModal({ toolCall, onClose }: ToolCallDetailsModal
           </button>
         </footer>
       </article>
-    </div>
+    </button>
   );
 }

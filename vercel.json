@@ -1,0 +1,9 @@
+{
+  "buildCommand": "pnpm turbo run build --filter=playground",
+  "outputDirectory": "apps/playground/dist",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": null,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

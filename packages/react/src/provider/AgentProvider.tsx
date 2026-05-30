@@ -1,5 +1,5 @@
-import type { PropsWithChildren } from "react";
 import type { AgentClient } from "@wafer/core";
+import type { PropsWithChildren } from "react";
 import { AgentContext } from "../context";
 
 export interface AgentProviderProps extends PropsWithChildren {

@@ -1,0 +1,87 @@
+import { AgentThread, ApprovalPanel, Composer, RunTimeline } from "@wafer/ui";
+
+interface IncidentChatPopupProps {
+  isOpen: boolean;
+  onToggle: () => void;
+  onPromptSubmitted: (prompt: string) => Promise<void>;
+  isPrefilling: boolean;
+  ollamaModel: string;
+}
+
+export function IncidentChatPopup({
+  isOpen,
+  onToggle,
+  onPromptSubmitted,
+  isPrefilling,
+  ollamaModel
+}: IncidentChatPopupProps) {
+  return (
+    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+      {isOpen ? (
+        <section
+          id="wafer-chat-popup"
+          className="grid max-h-[80vh] w-[min(30rem,calc(100vw-1rem))] grid-rows-[auto_minmax(0,1fr)_auto_auto] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+          aria-label="Warehouse Assistant Chat"
+        >
+          <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-4 py-3">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-violet-700">
+                Agent Assistant
+              </p>
+              <h2 className="mt-1 text-sm font-semibold text-slate-900">Warehouse Copilot</h2>
+              <p className="text-xs text-slate-500">Local backend: Ollama ({ollamaModel})</p>
+              <p className="mt-1 text-xs text-slate-600">
+                Context: This chat is for the warehouse incident report form on this page.
+              </p>
+            </div>
+            <button
+              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
+              type="button"
+              onClick={onToggle}
+              aria-label="Close chat"
+            >
+              Close
+            </button>
+          </header>
+
+          <div className="overflow-auto p-3">
+            <AgentThread
+              title="Incident Assistant Thread"
+              contextHint="I can help you complete this incident report. I focus on incident type, severity, location, time, description, and immediate actions."
+              emptyStateMessage="Start by pasting what happened, and I will help you structure it into a clean incident report."
+            />
+          </div>
+
+          <div className="border-t border-slate-200 bg-white p-3">
+            <Composer
+              label="Incident Prompt"
+              placeholder="e.g. Rewrite this incident summary in a professional report format..."
+              onPromptSubmitted={onPromptSubmitted}
+              isPrefilling={isPrefilling}
+            />
+          </div>
+
+          <details className="border-t border-slate-200 bg-slate-50">
+            <summary className="cursor-pointer px-3 py-2 text-xs font-medium text-slate-600">
+              Run timeline and approvals
+            </summary>
+            <div className="space-y-3 border-t border-slate-200 p-3">
+              <RunTimeline />
+              <ApprovalPanel />
+            </div>
+          </details>
+        </section>
+      ) : null}
+
+      <button
+        className="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg transition hover:bg-slate-700"
+        type="button"
+        aria-expanded={isOpen}
+        aria-controls="wafer-chat-popup"
+        onClick={onToggle}
+      >
+        {isOpen ? "Hide Assistant" : "Open Assistant"}
+      </button>
+    </div>
+  );
+}

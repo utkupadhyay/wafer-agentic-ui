@@ -1,11 +1,7 @@
 import type { AgentEvent } from "@wafer/protocol";
 import type { AgentState } from "../types";
 
-function appendMessageContent(
-  messages: AgentState["messages"],
-  messageId: string,
-  delta: string
-) {
+function appendMessageContent(messages: AgentState["messages"], messageId: string, delta: string) {
   const nextMessages = [...messages];
   const index = nextMessages.findIndex((message) => message.id === messageId);
 

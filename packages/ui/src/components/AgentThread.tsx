@@ -33,16 +33,18 @@ export function AgentThread({
           <p className="text-sm text-slate-500">{emptyStateMessage}</p>
         ) : null}
 
-        {messages.map((message) => (
-          <article key={message.id} className={messageCardClass(message.role)}>
-            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-              {message.role}
-            </p>
-            <p className="whitespace-pre-wrap text-sm leading-6 text-slate-700">
-              {message.content || "..."}
-            </p>
-          </article>
-        ))}
+        {messages
+          .filter((message) => message.role === "user" || message.role === "assistant")
+          .map((message) => (
+            <article key={message.id} className={messageCardClass(message.role)}>
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                {message.role}
+              </p>
+              <p className="whitespace-pre-wrap text-sm leading-6 text-slate-700">
+                {message.content || "..."}
+              </p>
+            </article>
+          ))}
       </div>
 
       {lastError ? <p className="mt-3 text-sm text-rose-600">Error: {lastError}</p> : null}

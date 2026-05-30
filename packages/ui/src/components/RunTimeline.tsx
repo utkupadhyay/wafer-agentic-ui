@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
 import { useRunState } from "@wafer/react";
+import { useState } from "react";
 import { ToolCallCard } from "./ToolCallCard";
 import { ToolCallDetailsModal } from "./ToolCallDetailsModal";
 import { panelClass, sectionTitleClass, stateChipClass } from "./theme";
@@ -8,24 +8,9 @@ export function RunTimeline() {
   const { runs, toolCalls } = useRunState();
   const [selectedToolCallId, setSelectedToolCallId] = useState<string | null>(null);
 
-  const selectedToolCall = useMemo(() => {
-    if (!selectedToolCallId) {
-      return null;
-    }
-
-    return toolCalls.find((toolCall) => toolCall.id === selectedToolCallId) ?? null;
-  }, [selectedToolCallId, toolCalls]);
-
-  useEffect(() => {
-    if (!selectedToolCallId) {
-      return;
-    }
-
-    const stillExists = toolCalls.some((toolCall) => toolCall.id === selectedToolCallId);
-    if (!stillExists) {
-      setSelectedToolCallId(null);
-    }
-  }, [selectedToolCallId, toolCalls]);
+  const selectedToolCall = selectedToolCallId
+    ? (toolCalls.find((tc) => tc.id === selectedToolCallId) ?? null)
+    : null;
 
   return (
     <section className={panelClass}>
@@ -56,7 +41,9 @@ export function RunTimeline() {
 
         <div>
           <h3 className={sectionTitleClass}>Tool Calls</h3>
-          {toolCalls.length === 0 ? <p className="mt-2 text-sm text-slate-500">No tool activity yet.</p> : null}
+          {toolCalls.length === 0 ? (
+            <p className="mt-2 text-sm text-slate-500">No tool activity yet.</p>
+          ) : null}
           <div className="mt-2 space-y-2">
             {toolCalls.map((toolCall) => (
               <ToolCallCard
@@ -68,7 +55,11 @@ export function RunTimeline() {
           </div>
         </div>
       </div>
-      <ToolCallDetailsModal toolCall={selectedToolCall} onClose={() => setSelectedToolCallId(null)} />
+
+      <ToolCallDetailsModal
+        toolCall={selectedToolCall}
+        onClose={() => setSelectedToolCallId(null)}
+      />
     </section>
   );
 }

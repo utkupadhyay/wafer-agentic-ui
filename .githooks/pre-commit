@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+
+# Collect staged .ts/.tsx files
+staged_files=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.tsx?$' || true)
+
+if [ -z "$staged_files" ]; then
+  exit 0
+fi
+
+echo "Running Biome on staged files..."
+echo "$staged_files" | xargs "$repo_root/node_modules/.bin/biome" check --no-errors-on-unmatched
