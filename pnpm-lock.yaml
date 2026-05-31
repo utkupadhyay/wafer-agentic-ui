@@ -180,6 +180,34 @@ importers:
         specifier: ^6.0.0
         version: 6.0.3
 
+  packages/wafer:
+    dependencies:
+      '@wafer/adapters':
+        specifier: workspace:*
+        version: link:../adapters
+      '@wafer/core':
+        specifier: workspace:*
+        version: link:../core
+      '@wafer/react':
+        specifier: workspace:*
+        version: link:../react
+      '@wafer/ui':
+        specifier: workspace:*
+        version: link:../ui
+    devDependencies:
+      '@types/react':
+        specifier: ^19.1.8
+        version: 19.2.15
+      react:
+        specifier: ^19.2.0
+        version: 19.2.6
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(typescript@6.0.3)
+      typescript:
+        specifier: ^6.0.0
+        version: 6.0.3
+
 packages:
 
   '@adobe/css-tools@4.5.0':

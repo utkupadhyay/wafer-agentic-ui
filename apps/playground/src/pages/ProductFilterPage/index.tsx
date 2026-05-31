@@ -175,23 +175,23 @@ export function ProductFilterPage() {
 
   return (
     <AgentProvider client={clientRef.current}>
-      <main className="min-h-screen bg-slate-50 text-slate-900">
+      <main className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
         <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <header className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700">
+          <header className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700 dark:text-violet-400">
               Wafer Commerce
             </p>
             <h1 className="mt-1.5 text-2xl font-semibold tracking-tight sm:text-3xl">
               Product Filter
             </h1>
-            <p className="mt-1.5 max-w-2xl text-sm leading-6 text-slate-600">
+            <p className="mt-1.5 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
               {PRODUCTS.length} products · Describe what you want and the agent filters the grid via
               tool calls.
             </p>
           </header>
 
           <div className="flex flex-col gap-4">
-            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-white/10 dark:bg-slate-900">
               <FilterChips
                 filters={filters}
                 resultCount={filteredProducts.length}

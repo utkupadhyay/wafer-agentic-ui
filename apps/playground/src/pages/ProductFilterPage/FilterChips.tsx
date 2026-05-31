@@ -66,22 +66,26 @@ export function FilterChips({ filters, resultCount, onRemove, onClear }: Props) 
   }
 
   if (chips.length === 0) {
-    return <p className="text-sm text-slate-500">{resultCount} products · No filters active</p>;
+    return (
+      <p className="text-sm text-slate-500 dark:text-slate-400">
+        {resultCount} products · No filters active
+      </p>
+    );
   }
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-sm text-slate-500">{resultCount} results</span>
+      <span className="text-sm text-slate-500 dark:text-slate-400">{resultCount} results</span>
       {chips.map((chip) => (
         <span
           key={chip.key}
-          className="inline-flex items-center gap-1 rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-700"
+          className="inline-flex items-center gap-1 rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-700 dark:border-violet-400/30 dark:bg-violet-400/10 dark:text-violet-300"
         >
           {chip.label}
           <button
             type="button"
             onClick={chip.onRemove}
-            className="ml-0.5 text-violet-400 transition hover:text-violet-700"
+            className="ml-0.5 text-violet-400 transition hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-200"
             aria-label={`Remove ${chip.label} filter`}
           >
             ×
@@ -91,7 +95,7 @@ export function FilterChips({ filters, resultCount, onRemove, onClear }: Props) 
       <button
         type="button"
         onClick={onClear}
-        className="text-xs text-slate-400 underline transition hover:text-slate-700"
+        className="text-xs text-slate-400 underline transition hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300"
       >
         Clear all
       </button>

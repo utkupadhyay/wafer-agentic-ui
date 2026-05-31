@@ -2,3 +2,5 @@
 
 @source "./**/*.{ts,tsx}";
 @source "../../../packages/ui/src/**/*.{ts,tsx}";
+
+@variant dark (&:where(.dark, .dark *));

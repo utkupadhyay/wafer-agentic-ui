@@ -200,16 +200,16 @@ export function AgenticFormPage() {
 
   return (
     <AgentProvider client={clientRef.current}>
-      <main className="min-h-screen bg-slate-50 text-slate-900">
+      <main className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
         <section className="mx-auto w-full max-w-5xl space-y-5 px-4 py-10 sm:px-6 lg:px-8">
-          <header className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700">
+          <header className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-700 dark:text-violet-400">
               Wafer Warehouse Safety Desk
             </p>
             <h1 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
               Incident Report Form
             </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
               Use this form to log any safety issue, near miss, or operational incident from the
               floor.
             </p>

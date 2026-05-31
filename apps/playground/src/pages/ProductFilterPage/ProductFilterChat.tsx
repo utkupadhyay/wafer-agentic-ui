@@ -1,4 +1,4 @@
-import { AgentThread, Composer, RunTimeline } from "@wafer/ui";
+import { AgentThread, Composer } from "@wafer/ui";
 
 interface Props {
   isOpen: boolean;
@@ -12,21 +12,25 @@ export function ProductFilterChat({ isOpen, onToggle, ollamaModel }: Props) {
       {isOpen ? (
         <section
           id="wafer-product-filter-chat"
-          className="grid max-h-[80vh] w-[min(28rem,calc(100vw-2rem))] grid-rows-[auto_minmax(0,1fr)_auto_auto] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
+          className="grid max-h-[80vh] w-[min(28rem,calc(100vw-2rem))] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl dark:border-white/10 dark:bg-slate-900"
           aria-label="Product Filter Assistant"
         >
-          <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-4 py-3">
+          <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-4 py-3 dark:border-white/10">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-violet-700">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-400">
                 Filter Assistant
               </p>
-              <h2 className="mt-1 text-sm font-semibold text-slate-900">Product Copilot</h2>
-              <p className="text-xs text-slate-500">Local backend: Ollama ({ollamaModel})</p>
+              <h2 className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100">
+                Product Copilot
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Local backend: Ollama ({ollamaModel})
+              </p>
             </div>
             <button
               type="button"
               onClick={onToggle}
-              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
+              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/10"
               aria-label="Close chat"
             >
               Close
@@ -41,21 +45,12 @@ export function ProductFilterChat({ isOpen, onToggle, ollamaModel }: Props) {
             />
           </div>
 
-          <div className="border-t border-slate-200 bg-white p-3">
+          <div className="border-t border-slate-200 bg-white p-3 dark:border-white/10 dark:bg-slate-900">
             <Composer
               label="What are you looking for?"
               placeholder="e.g. Blue tops in size S or M, under $50…"
             />
           </div>
-
-          <details className="border-t border-slate-200 bg-slate-50">
-            <summary className="cursor-pointer px-3 py-2 text-xs font-medium text-slate-600">
-              Tool activity
-            </summary>
-            <div className="border-t border-slate-200 p-3">
-              <RunTimeline />
-            </div>
-          </details>
         </section>
       ) : null}
 
@@ -64,7 +59,7 @@ export function ProductFilterChat({ isOpen, onToggle, ollamaModel }: Props) {
         onClick={onToggle}
         aria-expanded={isOpen}
         aria-controls="wafer-product-filter-chat"
-        className="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg transition hover:bg-slate-700"
+        className="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg transition hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600"
       >
         {isOpen ? "Hide Assistant" : "Filter Assistant"}
       </button>

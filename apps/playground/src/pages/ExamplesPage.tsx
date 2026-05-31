@@ -65,52 +65,54 @@ const examples = [
 
 const accentStyles = {
   cyan: {
-    label: "text-cyan-400/80",
-    border: "hover:border-cyan-300/25",
-    tag: "border-cyan-300/30 bg-cyan-300/10 text-cyan-200",
-    cta: "text-cyan-400 group-hover:text-cyan-300",
-    dot: "bg-cyan-400/60"
+    label: "text-cyan-600 dark:text-cyan-400/80",
+    border: "hover:border-cyan-300 dark:hover:border-cyan-300/25",
+    tag: "border-cyan-300 bg-cyan-50 text-cyan-700 dark:border-cyan-300/30 dark:bg-cyan-300/10 dark:text-cyan-200",
+    cta: "text-cyan-600 group-hover:text-cyan-700 dark:text-cyan-400 dark:group-hover:text-cyan-300",
+    dot: "bg-cyan-500 dark:bg-cyan-400/60"
   },
   violet: {
-    label: "text-violet-400/80",
-    border: "hover:border-violet-300/25",
-    tag: "border-violet-300/30 bg-violet-300/10 text-violet-200",
-    cta: "text-violet-400 group-hover:text-violet-300",
-    dot: "bg-violet-400/60"
+    label: "text-violet-600 dark:text-violet-400/80",
+    border: "hover:border-violet-300 dark:hover:border-violet-300/25",
+    tag: "border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-300/30 dark:bg-violet-300/10 dark:text-violet-200",
+    cta: "text-violet-600 group-hover:text-violet-700 dark:text-violet-400 dark:group-hover:text-violet-300",
+    dot: "bg-violet-500 dark:bg-violet-400/60"
   },
   emerald: {
-    label: "text-emerald-400/80",
-    border: "hover:border-emerald-300/25",
-    tag: "border-emerald-300/30 bg-emerald-300/10 text-emerald-200",
-    cta: "text-emerald-400 group-hover:text-emerald-300",
-    dot: "bg-emerald-400/60"
+    label: "text-emerald-600 dark:text-emerald-400/80",
+    border: "hover:border-emerald-300 dark:hover:border-emerald-300/25",
+    tag: "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-300/30 dark:bg-emerald-300/10 dark:text-emerald-200",
+    cta: "text-emerald-600 group-hover:text-emerald-700 dark:text-emerald-400 dark:group-hover:text-emerald-300",
+    dot: "bg-emerald-500 dark:bg-emerald-400/60"
   },
   rose: {
-    label: "text-rose-400/80",
-    border: "hover:border-rose-300/25",
-    tag: "border-rose-300/30 bg-rose-300/10 text-rose-200",
-    cta: "text-rose-400 group-hover:text-rose-300",
-    dot: "bg-rose-400/60"
+    label: "text-rose-600 dark:text-rose-400/80",
+    border: "hover:border-rose-300 dark:hover:border-rose-300/25",
+    tag: "border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-300/30 dark:bg-rose-300/10 dark:text-rose-200",
+    cta: "text-rose-600 group-hover:text-rose-700 dark:text-rose-400 dark:group-hover:text-rose-300",
+    dot: "bg-rose-500 dark:bg-rose-400/60"
   }
 };
 
 export function ExamplesPage() {
   return (
-    <main className="min-h-screen bg-[#050915] px-4 py-12 text-slate-100 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-slate-50 px-4 py-12 text-slate-900 dark:bg-[#050915] dark:text-slate-100 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-5xl space-y-10">
         <header className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-500">
             Playground
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Examples</h1>
-          <p className="max-w-xl text-sm leading-7 text-slate-400">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Examples</h1>
+          <p className="max-w-xl text-sm leading-7 text-slate-600 dark:text-slate-400">
             Each example runs against a local Ollama instance. Set{" "}
-            <code className="rounded bg-white/8 px-1 py-0.5 text-xs text-slate-300">
+            <code className="rounded bg-slate-200 px-1 py-0.5 text-xs text-slate-700 dark:bg-white/8 dark:text-slate-300">
               VITE_OLLAMA_MODEL
             </code>{" "}
             in your{" "}
-            <code className="rounded bg-white/8 px-1 py-0.5 text-xs text-slate-300">.env</code> to
-            point at your preferred model.
+            <code className="rounded bg-slate-200 px-1 py-0.5 text-xs text-slate-700 dark:bg-white/8 dark:text-slate-300">
+              .env
+            </code>{" "}
+            to point at your preferred model.
           </p>
         </header>
 
@@ -121,17 +123,24 @@ export function ExamplesPage() {
               <Link
                 key={example.slug}
                 to={`/examples/${example.slug}`}
-                className={`group flex flex-col rounded-2xl border border-white/10 bg-white/4 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.3)] backdrop-blur transition ${s.border} hover:bg-white/6`}
+                className={`group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:bg-slate-50 dark:border-white/10 dark:bg-white/4 dark:shadow-[0_20px_60px_rgba(0,0,0,0.3)] dark:backdrop-blur dark:hover:bg-white/6 ${s.border}`}
               >
                 <p className={`text-[11px] font-semibold uppercase tracking-[0.2em] ${s.label}`}>
                   {example.label}
                 </p>
-                <h2 className="mt-2 text-lg font-semibold text-white">{example.title}</h2>
-                <p className="mt-2 text-sm leading-7 text-slate-400">{example.description}</p>
+                <h2 className="mt-2 text-lg font-semibold text-slate-900 dark:text-white">
+                  {example.title}
+                </h2>
+                <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-400">
+                  {example.description}
+                </p>
 
                 <ul className="mt-5 space-y-2">
                   {example.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2.5 text-sm text-slate-300">
+                    <li
+                      key={feature}
+                      className="flex items-start gap-2.5 text-sm text-slate-700 dark:text-slate-300"
+                    >
                       <span className={`mt-2 h-1.5 w-1.5 shrink-0 rounded-full ${s.dot}`} />
                       {feature}
                     </li>

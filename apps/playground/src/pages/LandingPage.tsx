@@ -1,6 +1,6 @@
-import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { useRef } from "react";
+import { NavBar } from "../components/NavBar";
 
 const architectureLayers = [
   {
@@ -42,8 +42,6 @@ const productHighlights = [
   "Drop-in React primitives and polished components"
 ];
 
-const githubRepoUrl = "https://github.com/utkupadhyay/wafer-agentic-ui";
-
 export function LandingPage() {
   const architectureRef = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll();
@@ -66,7 +64,7 @@ export function LandingPage() {
   const layerCards = architectureLayers.map((layer, index) => (
     <motion.article
       key={layer.packageName}
-      className="rounded-2xl border border-white/10 bg-slate-950/45 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur"
+      className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-950/45 dark:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
@@ -77,22 +75,27 @@ export function LandingPage() {
       }}
     >
       <div className="flex items-start gap-4">
-        <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-cyan-300/40 bg-cyan-300/10 text-xs font-semibold text-cyan-200">
+        <span className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-cyan-500 bg-cyan-50 text-xs font-semibold text-cyan-700 dark:border-cyan-300/40 dark:bg-cyan-300/10 dark:text-cyan-200">
           {index + 1}
         </span>
         <div className="space-y-2">
-          <p className="text-sm font-medium uppercase tracking-[0.16em] text-cyan-100/80">
+          <p className="text-sm font-medium uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-100/80">
             {layer.name}
           </p>
-          <p className="text-sm font-semibold text-white">{layer.packageName}</p>
-          <p className="text-sm leading-6 text-slate-300">{layer.description}</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-white">
+            {layer.packageName}
+          </p>
+          <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
+            {layer.description}
+          </p>
         </div>
       </div>
     </motion.article>
   ));
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden bg-[#050915] text-slate-100">
+    <main className="relative min-h-screen overflow-x-hidden bg-slate-50 text-slate-900 dark:bg-[#050915] dark:text-slate-100">
+      <NavBar />
       <motion.div
         className="fixed left-0 right-0 top-0 z-50 h-0.5 origin-left bg-linear-to-r from-cyan-400 via-violet-400 to-cyan-400"
         style={{ scaleX: pageProgress }}
@@ -100,57 +103,20 @@ export function LandingPage() {
 
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute -top-32 -left-56 h-112 w-md rounded-full bg-cyan-500/20 blur-3xl"
+          className="absolute -top-32 -left-56 h-112 w-md rounded-full bg-cyan-500/10 blur-3xl dark:bg-cyan-500/20"
           animate={{ x: [0, 28, 0], y: [0, 14, 0] }}
           transition={{ repeat: Number.POSITIVE_INFINITY, duration: 13, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute -bottom-40 -right-48 h-100 w-100 rounded-full bg-violet-500/20 blur-3xl"
+          className="absolute -bottom-40 -right-48 h-100 w-100 rounded-full bg-violet-500/10 blur-3xl dark:bg-violet-500/20"
           animate={{ x: [0, -24, 0], y: [0, -16, 0] }}
           transition={{ repeat: Number.POSITIVE_INFINITY, duration: 14, ease: "easeInOut" }}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(45,212,191,0.16),transparent_34%),radial-gradient(circle_at_80%_100%,rgba(139,92,246,0.18),transparent_35%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(45,212,191,0.08),transparent_34%),radial-gradient(circle_at_80%_100%,rgba(139,92,246,0.10),transparent_35%)] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(45,212,191,0.16),transparent_34%),radial-gradient(circle_at_80%_100%,rgba(139,92,246,0.18),transparent_35%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-size-[34px_34px]" />
       </div>
 
       <section className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-        <header className="rounded-2xl border border-white/10 bg-slate-950/55 px-5 py-4 shadow-[0_16px_40px_rgba(0,0,0,0.35)] backdrop-blur">
-          <nav className="flex flex-wrap items-center justify-end gap-2">
-            <Link
-              to="/examples"
-              className="inline-flex items-center rounded-md border border-white/15 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:bg-white/10"
-            >
-              Examples
-            </Link>
-            <Link
-              to="/docs"
-              className="inline-flex items-center rounded-md border border-white/15 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:bg-white/10"
-            >
-              Docs
-            </Link>
-            <a
-              className="inline-flex items-center rounded-md border border-white/15 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:bg-white/10"
-              href={githubRepoUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub
-            </a>
-          </nav>
-
-          <div className="mt-4 flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-200/80">
-              Wafer UI
-            </p>
-          </div>
-
-          <div>
-            <h1 className="mt-1 text-lg font-semibold text-white sm:text-xl">
-              Lightweight Agent Interfaces for Real Products
-            </h1>
-          </div>
-        </header>
-
         <motion.section
           className="mt-12 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]"
           initial={{ opacity: 0, y: 20 }}
@@ -158,50 +124,50 @@ export function LandingPage() {
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="space-y-5">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-200/85">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-600 dark:text-cyan-200/85">
               Why Wafer
             </p>
-            <h2 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+            <h2 className="text-4xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
               Agentic UI that stays fast, flexible, and backend-neutral.
             </h2>
-            <p className="max-w-2xl text-base leading-7 text-slate-300">
+            <p className="max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
               Wafer is named for one reason: it stays lightweight while giving you production-grade
               agent UI primitives. Use it with LangGraph, Mastra, Ollama, or your own orchestration
               runtime and keep your frontend architecture clean.
             </p>
             <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center rounded-md border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-sm text-cyan-100">
+              <span className="inline-flex items-center rounded-md border border-cyan-400 bg-cyan-50 px-3 py-1 text-sm text-cyan-700 dark:border-cyan-300/40 dark:bg-cyan-300/10 dark:text-cyan-100">
                 React v1
               </span>
-              <span className="inline-flex items-center rounded-md border border-violet-300/40 bg-violet-300/10 px-3 py-1 text-sm text-violet-100">
+              <span className="inline-flex items-center rounded-md border border-violet-400 bg-violet-50 px-3 py-1 text-sm text-violet-700 dark:border-violet-300/40 dark:bg-violet-300/10 dark:text-violet-100">
                 Backend Neutral
               </span>
-              <span className="inline-flex items-center rounded-md border border-white/20 bg-white/5 px-3 py-1 text-sm text-slate-200">
+              <span className="inline-flex items-center rounded-md border border-slate-300 bg-slate-100 px-3 py-1 text-sm text-slate-700 dark:border-white/20 dark:bg-white/5 dark:text-slate-200">
                 Local-First Ready
               </span>
             </div>
           </div>
 
           <motion.aside
-            className="rounded-2xl border border-white/10 bg-slate-950/45 p-5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur"
+            className="rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-950/45 dark:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100/80">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-100/80">
               Product Highlights
             </p>
             <ul className="mt-4 space-y-3">
               {productHighlights.map((item) => (
                 <li
                   key={item}
-                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-200"
+                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200"
                 >
                   {item}
                 </li>
               ))}
             </ul>
-            <p className="mt-5 text-xs leading-6 text-slate-400">
+            <p className="mt-5 text-xs leading-6 text-slate-500 dark:text-slate-400">
               React-first in v1, with a design-system-neutral core and prebuilt component kit.
             </p>
           </motion.aside>
@@ -213,12 +179,12 @@ export function LandingPage() {
         ref={architectureRef}
         className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-20 sm:px-6 lg:px-8"
       >
-        <div className="rounded-2xl border border-white/10 bg-slate-950/55 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur sm:p-8">
-          <p className="mb-7 text-sm leading-7 text-slate-400">
+        <div className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-white/10 dark:bg-slate-950/55 dark:shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:p-8">
+          <p className="mb-7 text-sm leading-7 text-slate-500 dark:text-slate-400">
             Five layers. Each one does exactly one job.
           </p>
           <div className="relative">
-            <div className="pointer-events-none absolute bottom-2 left-3 top-2 hidden w-px bg-slate-700 md:block" />
+            <div className="pointer-events-none absolute bottom-2 left-3 top-2 hidden w-px bg-slate-200 dark:bg-slate-700 md:block" />
             <motion.div
               className="pointer-events-none absolute bottom-2 left-3 top-2 hidden origin-top bg-linear-to-b from-cyan-300 via-violet-300 to-cyan-300 md:block"
               style={{ scaleY: architectureLineProgress, width: "1px" }}
@@ -227,13 +193,13 @@ export function LandingPage() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-slate-950/55 px-5 py-4 backdrop-blur">
-          <p className="text-sm text-slate-300">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white/80 px-5 py-4 backdrop-blur dark:border-white/10 dark:bg-slate-950/55">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
             Build once, plug into any serious backend runtime.
           </p>
           <a
-            className="text-sm text-slate-400 transition hover:text-slate-200"
-            href={githubRepoUrl}
+            className="text-sm text-slate-500 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+            href="https://github.com/utkupadhyay/wafer-agentic-ui"
             target="_blank"
             rel="noreferrer"
           >
