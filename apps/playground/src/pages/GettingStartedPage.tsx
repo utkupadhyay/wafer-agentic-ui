@@ -137,6 +137,9 @@ pnpm add wafer
 # or
 yarn add wafer`,
 
+  tailwindSource: `/* In your global CSS file (e.g. src/styles.css) */
+@source "../../node_modules/wafer/dist/**/*.js";`,
+
   quickStartHooks: `import { createAgentClient, AgentProvider, useThread, useComposer } from "wafer";
 import { createOllamaTransport } from "wafer/adapters/ollama";
 
@@ -678,12 +681,22 @@ export function GettingStartedPage() {
                 </li>
                 <li>
                   <strong className="text-slate-800 dark:text-slate-200">Tailwind CSS v4</strong> —
-                  required by <Code>@wafer/ui</Code> components
+                  required peer dependency
                 </li>
               </ul>
-              <p className="mt-3 text-slate-500">
-                If you only use <Code>@wafer/core</Code> and <Code>@wafer/react</Code> with your own
-                UI, Tailwind is optional.
+            </div>
+            <div className="mt-6">
+              <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-white">
+                Tell Tailwind to scan Wafer's bundle
+              </p>
+              <p className="mb-3 text-sm leading-6 text-slate-600 dark:text-slate-400">
+                Wafer ships pre-built JS — Tailwind won't see the component class names unless you
+                point it at the <Code>dist</Code> files. Add one line to your global CSS:
+              </p>
+              <CodeBlock lang="css" code={snippets.tailwindSource} />
+              <p className="text-sm leading-6 text-slate-600 dark:text-slate-400">
+                Without this, Tailwind's production build will purge the component styles and the UI
+                will appear unstyled.
               </p>
             </div>
           </Section>

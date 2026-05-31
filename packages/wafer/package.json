@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Agentic UI toolkit for React — single-package install.",
   "type": "module",
+  "license": "MIT",
   "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -31,13 +32,8 @@
     "lint": "echo \"No lint configured for wafer\""
   },
   "peerDependencies": {
-    "react": "^19.0.0"
-  },
-  "dependencies": {
-    "@wafer/adapters": "workspace:*",
-    "@wafer/core": "workspace:*",
-    "@wafer/react": "workspace:*",
-    "@wafer/ui": "workspace:*"
+    "react": "^19.0.0",
+    "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.8",

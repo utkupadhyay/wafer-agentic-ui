@@ -10,5 +10,5 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  external: ["react", "@wafer/core", "@wafer/react", "@wafer/ui", "@wafer/adapters"]
+  external: ["react"]
 });
