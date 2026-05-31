@@ -37,6 +37,10 @@
   },
   "devDependencies": {
     "@types/react": "^19.1.8",
+    "@wafer/adapters": "workspace:*",
+    "@wafer/core": "workspace:*",
+    "@wafer/react": "workspace:*",
+    "@wafer/ui": "workspace:*",
     "react": "^19.2.0",
     "tsup": "^8.5.0",
     "typescript": "^6.0.0"
