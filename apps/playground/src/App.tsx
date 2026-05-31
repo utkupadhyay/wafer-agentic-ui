@@ -2,6 +2,7 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  HeadContent,
   Link,
   Outlet,
   RouterProvider
@@ -19,7 +20,12 @@ import { OnboardingAgentPage } from "./pages/OnboardingAgentPage";
 import { ProductFilterPage } from "./pages/ProductFilterPage";
 
 const rootRoute = createRootRoute({
-  component: () => <Outlet />,
+  component: () => (
+    <>
+      <HeadContent />
+      <Outlet />
+    </>
+  ),
   notFoundComponent: () => (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <div className="rounded-xl border border-slate-200 bg-white p-6 text-center shadow-sm dark:border-white/10 dark:bg-slate-900">
@@ -38,31 +44,81 @@ const rootRoute = createRootRoute({
 const landingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  component: LandingPage
+  component: LandingPage,
+  head: () => ({
+    meta: [
+      { title: "Wafer – Agentic UI Library for React" },
+      {
+        name: "description",
+        content:
+          "Wafer is a lightweight, open-source agentic UI library for React. Build AI agent chat interfaces with streaming, tool calls, and approval flows. Works with Ollama, Groq, LangGraph, Mastra, and any custom backend."
+      }
+    ]
+  })
 });
 
 const docsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/docs",
-  component: DocsPage
+  component: DocsPage,
+  head: () => ({
+    meta: [
+      { title: "Docs – Wafer Agentic UI" },
+      {
+        name: "description",
+        content:
+          "Documentation for Wafer — the agentic UI library for React. Explore the getting started guide, architecture overview, and integration examples."
+      }
+    ]
+  })
 });
 
 const gettingStartedRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/docs/getting-started",
-  component: GettingStartedPage
+  component: GettingStartedPage,
+  head: () => ({
+    meta: [
+      { title: "Getting Started – Wafer Agentic UI" },
+      {
+        name: "description",
+        content:
+          "Get started with Wafer in minutes. Install the package, connect Ollama, Groq, Claude, or OpenAI, and add a streaming AI agent chat UI to your React app."
+      }
+    ]
+  })
 });
 
 const architectureRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/docs/architecture",
-  component: ArchitecturePage
+  component: ArchitecturePage,
+  head: () => ({
+    meta: [
+      { title: "Architecture – Wafer Agentic UI" },
+      {
+        name: "description",
+        content:
+          "Learn how Wafer works end-to-end: protocol contracts, event sourcing, the AgentTransport interface, React hooks, and pre-built UI components."
+      }
+    ]
+  })
 });
 
 const examplesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/examples",
-  component: ExamplesShell
+  component: ExamplesShell,
+  head: () => ({
+    meta: [
+      { title: "Live Examples – Wafer Agentic UI" },
+      {
+        name: "description",
+        content:
+          "Explore live demos of Wafer's agentic UI components: incident response forms, onboarding agents, data visualizers, and product filter assistants."
+      }
+    ]
+  })
 });
 
 const examplesIndexRoute = createRoute({
@@ -74,25 +130,65 @@ const examplesIndexRoute = createRoute({
 const incidentFormRoute = createRoute({
   getParentRoute: () => examplesRoute,
   path: "incident-form",
-  component: AgenticFormPage
+  component: AgenticFormPage,
+  head: () => ({
+    meta: [
+      { title: "Incident Form Agent – Wafer Examples" },
+      {
+        name: "description",
+        content:
+          "Live demo: an AI agent that fills out an incident response form using Wafer's agentic UI components and Groq."
+      }
+    ]
+  })
 });
 
 const onboardingRoute = createRoute({
   getParentRoute: () => examplesRoute,
   path: "onboarding",
-  component: OnboardingAgentPage
+  component: OnboardingAgentPage,
+  head: () => ({
+    meta: [
+      { title: "Onboarding Agent – Wafer Examples" },
+      {
+        name: "description",
+        content:
+          "Live demo: an AI-powered onboarding flow built with Wafer's React agent components."
+      }
+    ]
+  })
 });
 
 const dataVisualizerRoute = createRoute({
   getParentRoute: () => examplesRoute,
   path: "data-visualizer",
-  component: DataVisualizerPage
+  component: DataVisualizerPage,
+  head: () => ({
+    meta: [
+      { title: "Data Visualizer Agent – Wafer Examples" },
+      {
+        name: "description",
+        content:
+          "Live demo: an AI agent that generates and explains data visualizations using Wafer's agentic UI library."
+      }
+    ]
+  })
 });
 
 const productFilterRoute = createRoute({
   getParentRoute: () => examplesRoute,
   path: "product-filter",
-  component: ProductFilterPage
+  component: ProductFilterPage,
+  head: () => ({
+    meta: [
+      { title: "Product Filter Agent – Wafer Examples" },
+      {
+        name: "description",
+        content:
+          "Live demo: an AI agent that filters and recommends products through a conversational interface built with Wafer."
+      }
+    ]
+  })
 });
 
 const routeTree = rootRoute.addChildren([
