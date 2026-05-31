@@ -1,5 +1,5 @@
 {
-  "name": "wafer",
+  "name": "wafer-ui",
   "version": "0.1.0",
   "description": "Agentic UI toolkit for React — single-package install.",
   "type": "module",
